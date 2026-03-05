@@ -7,6 +7,25 @@ import TemplatePicker from '../components/generator/TemplatePicker';
 import ResumePreview from '../components/generator/ResumePreview';
 import CoverLetterPanel from '../components/generator/CoverLetterPanel';
 
+const METRICS_KEY = 'resume_ai_metrics';
+
+const incrementMetric = (field) => {
+    try {
+        const raw = localStorage.getItem(METRICS_KEY);
+        const base = raw ? JSON.parse(raw) : { resumesGenerated: 0, coverLettersDrafted: 0 };
+        const next = {
+            resumesGenerated: base.resumesGenerated || 0,
+            coverLettersDrafted: base.coverLettersDrafted || 0,
+        };
+        if (field in next) {
+            next[field] = (next[field] || 0) + 1;
+            localStorage.setItem(METRICS_KEY, JSON.stringify(next));
+        }
+    } catch {
+        // Ignore localStorage errors; metrics are best-effort only
+    }
+};
+
 const API = 'http://localhost:5000/api/resume';
 
 const EMPTY_FORM = {
@@ -51,6 +70,7 @@ export default function GeneratorPage() {
             const data = await res.json();
             if (!res.ok) throw new Error(data.error);
             setResumeData(data.resumeData);
+            incrementMetric('resumesGenerated');
             setStep(2);
             toast.success('Resume generated! Pick a template below.');
         } catch (err) {
@@ -75,6 +95,7 @@ export default function GeneratorPage() {
             const data = await res.json();
             if (!res.ok) throw new Error(data.error);
             setCoverLetter(data.coverLetter);
+            incrementMetric('coverLettersDrafted');
             setActiveTab('cover');
             toast.success('Cover letter generated!');
         } catch (err) {

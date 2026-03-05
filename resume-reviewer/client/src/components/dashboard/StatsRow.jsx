@@ -1,9 +1,35 @@
+import { useEffect, useState } from "react";
 import { FileText, Sparkles, Target } from "lucide-react";
 
+const METRICS_KEY = "resume_ai_metrics";
+
 export default function StatsRow({ data }) {
-    // Just show zero if no data
+    // History-based metric
     const reviewCount = data?.filter(r => r.analyses?.length > 0).length || 0;
-    const generateCount = 0; // The current API doesn't save generated resumes yet
+
+    // Client-side metrics for generator usage
+    const [generatorMetrics, setGeneratorMetrics] = useState({
+        resumesGenerated: 0,
+        coverLettersDrafted: 0,
+    });
+
+    useEffect(() => {
+        try {
+            const stored = localStorage.getItem(METRICS_KEY);
+            if (stored) {
+                const parsed = JSON.parse(stored);
+                setGeneratorMetrics({
+                    resumesGenerated: parsed.resumesGenerated || 0,
+                    coverLettersDrafted: parsed.coverLettersDrafted || 0,
+                });
+            }
+        } catch {
+            // If localStorage is unavailable or corrupted, just fall back to zeros
+        }
+    }, []);
+
+    const generateCount = generatorMetrics.resumesGenerated || 0;
+    const coverLetterCount = generatorMetrics.coverLettersDrafted || 0;
 
     const stats = [
         {
@@ -22,7 +48,7 @@ export default function StatsRow({ data }) {
         },
         {
             label: "Cover Letters Drafted",
-            value: generateCount, // Assuming 1-to-1 for now based on current schema limitation
+            value: coverLetterCount,
             icon: FileText,
             color: "text-violet-600",
             bg: "bg-violet-100",
