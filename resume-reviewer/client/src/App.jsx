@@ -7,6 +7,7 @@ import AppLayout from './components/layout/AppLayout';
 import ProtectedRoute from './components/shared/ProtectedRoute';
 
 // Pages
+import Home from './pages/Home';
 import LandingPage from './pages/LandingPage';
 import DashboardPage from './pages/DashboardPage';
 import GeneratorPage from './pages/GeneratorPage';
@@ -29,7 +30,8 @@ function App() {
         <Toaster />
         <Routes>
           {/* Public marketing pages */}
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/landing" element={<LandingPage />} />
           <Route path="/pricing" element={<PricingPage />} />
 
           {/* Authenticated Application Routes wrapped in AppLayout */}
