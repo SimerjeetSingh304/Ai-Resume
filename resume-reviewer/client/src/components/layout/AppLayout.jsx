@@ -1,27 +1,20 @@
-import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import Sidebar from "./Sidebar";
-import Topbar from "./Topbar";
 import ErrorBoundary from "../shared/ErrorBoundary";
+import AppNavbar from "./AppNavbar";
 
 export default function AppLayout() {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
-
     return (
-        <div className="flex h-screen overflow-hidden bg-slate-50 font-sans text-slate-900">
-            <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-
-            <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-                <Topbar onMenuClick={() => setSidebarOpen(true)} />
-
-                <main className="flex-1 overflow-y-auto w-full">
-                    <ErrorBoundary>
-                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/20 to-slate-100 font-sans text-slate-900">
+            <AppNavbar />
+            <main className="py-8">
+                <ErrorBoundary>
+                    <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+                        <div className="rounded-3xl bg-white/80 shadow-sm border border-slate-100/80 backdrop-blur p-6 sm:p-8">
                             <Outlet />
                         </div>
-                    </ErrorBoundary>
-                </main>
-            </div>
+                    </div>
+                </ErrorBoundary>
+            </main>
         </div>
     );
 }

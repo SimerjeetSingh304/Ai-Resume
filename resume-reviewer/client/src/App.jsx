@@ -13,6 +13,7 @@ import GeneratorPage from './pages/GeneratorPage';
 import ReviewerPage from './pages/ReviewerPage';
 import ReviewResultsPage from './pages/ReviewResultsPage';
 import HistoryPage from './pages/HistoryPage';
+import PricingPage from './pages/PricingPage';
 
 // Ensure this key is in your client/.env file
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
@@ -27,8 +28,9 @@ function App() {
       <Router>
         <Toaster />
         <Routes>
-          {/* Public Landing Page */}
+          {/* Public marketing pages */}
           <Route path="/" element={<LandingPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
 
           {/* Authenticated Application Routes wrapped in AppLayout */}
           <Route element={<ProtectedRoute />}>

@@ -72,51 +72,71 @@ export default function ReviewerPage() {
     };
 
     return (
-        <div className="max-w-4xl mx-auto animate-in fade-in duration-500">
+        <div className="mx-auto max-w-5xl animate-in fade-in duration-500 space-y-8">
             <LoadingOverlay isOpen={isAnalyzing} />
 
             <PageHeader
                 title="Resume Reviewer"
-                subtitle="Get instant, actionable feedback based on advanced ATS algorithms and expert recruiter insights."
+                subtitle="Upload your resume, paste a target role, and let our AI run a full ATS-style analysis."
             />
 
-            <div className="grid lg:grid-cols-2 gap-8">
+            <div className="grid gap-8 xl:gap-10 lg:grid-cols-[1.35fr_minmax(0,1fr)] items-start">
                 {/* Left Column: Form */}
                 <div className="space-y-6">
-                    <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                        <h3 className="text-lg font-bold text-slate-900 mb-4">1. Upload Resume</h3>
+                    <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50/80 p-6">
+                        <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-1">
+                            Step 1
+                        </h3>
+                        <h2 className="text-xl font-bold text-slate-900 mb-4">Upload your resume file</h2>
+                        <p className="text-xs text-slate-500 mb-4">
+                            We support PDF and DOCX. Your file stays private and is used only to generate this analysis.
+                        </p>
                         <FileUploadZone onFileSelect={setFile} selectedFile={file} />
                     </div>
 
-                    <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                        <h3 className="text-lg font-bold text-slate-900 mb-4">2. Target Role</h3>
+                    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                        <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-1">
+                            Step 2
+                        </h3>
+                        <h2 className="text-xl font-bold text-slate-900 mb-4">Paste the job description</h2>
+                        <p className="text-xs text-slate-500 mb-4">
+                            Add the role you are targeting so we can score alignment, missing keywords, and impact.
+                        </p>
                         <JobDescriptionInput value={jobDescription} onChange={setJobDescription} />
                     </div>
                 </div>
 
                 {/* Right Column: Action & Info */}
                 <div className="space-y-6">
-                    <div className="bg-blue-600 rounded-2xl p-8 text-white shadow-lg shadow-blue-900/20 text-center">
-                        <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <FileSearch className="w-8 h-8 text-white" />
+                    <div className="rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 p-8 text-white shadow-lg shadow-blue-900/20">
+                        <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center mb-5">
+                            <FileSearch className="w-7 h-7 text-white" />
                         </div>
-                        <h3 className="text-2xl font-bold mb-4">Ready to analyze?</h3>
-                        <p className="text-blue-100 mb-8 text-sm leading-relaxed">
-                            Our AI will score your formatting, identify missing keywords, and suggest powerful bullet rewrites.
+                        <h3 className="text-2xl font-bold mb-3">Run your ATS analysis</h3>
+                        <p className="text-blue-100 mb-7 text-sm leading-relaxed">
+                            We will parse your resume, compare it against the role, and generate a detailed scorecard
+                            with strengths, gaps, and bullet-point rewrites.
                         </p>
                         <button
                             onClick={handleAnalyze}
                             disabled={!file || isAnalyzing}
-                            className="w-full py-4 px-6 bg-white text-blue-600 hover:bg-blue-50 focus:ring-4 focus:ring-blue-300 font-bold rounded-xl shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+                            className="w-full py-3.5 px-6 rounded-xl bg-white text-blue-700 text-sm sm:text-base font-semibold shadow-lg shadow-blue-900/20 hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:opacity-60 disabled:cursor-not-allowed transition-all"
                         >
-                            Analyze Resume Now
+                            {isAnalyzing ? "Analyzing your resume…" : "Analyze my resume"}
                         </button>
+                        <p className="mt-3 text-[11px] text-blue-100/90">
+                            You will be taken to a results dashboard with your ATS score and improvement suggestions.
+                        </p>
                     </div>
 
-                    <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6">
-                        <h4 className="font-semibold text-slate-900 mb-2 text-sm">Privacy & Security</h4>
-                        <p className="text-xs text-slate-500 leading-relaxed">
-                            Your documents are encrypted securely. We never share your data with third-party recruiters or employers. You can delete your resume from our servers at any time from your History dashboard.
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-6 text-xs text-slate-600 space-y-2">
+                        <h4 className="text-sm font-semibold text-slate-900 mb-1">Privacy & Security</h4>
+                        <p>
+                            Your documents are stored securely and never sold or shared with third parties. You can delete
+                            any resume and its analysis at any time from your History tab.
+                        </p>
+                        <p className="text-slate-500">
+                            For best results, upload a clean, text-based PDF or DOCX rather than a scanned image.
                         </p>
                     </div>
                 </div>
