@@ -29,8 +29,7 @@ A full-stack web application where users can upload their resume (PDF or DOCX), 
 - MongoDB (Mongoose)
 - Gemini API (`@google/generative-ai`)
 - `pdf-parse` & `mammoth` (File Parsing)
-- Multer (File Upload Handling)
-
+- Multer (File Upload Handling)      y
 ## Getting Started
 
 ### Prerequisites
