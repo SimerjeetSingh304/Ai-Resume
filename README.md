@@ -23,7 +23,7 @@ A full-stack web application where users can upload their resume (PDF or DOCX), 
 - React Dropzone
 - React Router DOM
 
-### Backend (Server).
+### Backend (Server)
 - Node.js
 - Express
 - MongoDB (Mongoose)
