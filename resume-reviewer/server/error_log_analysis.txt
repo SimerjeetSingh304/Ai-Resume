@@ -1,4 +1,6 @@
-Error: Failed to analyze resume with AI.
-    at requestResumeAnalysis (file:///C:/New%20folder/New%20folder%20(36)/resume-reviewer/server/utils/gemini.js:117:23)
+ValidationError: Analysis validation failed: overallScore: Path `overallScore` is required.
+    at model.validate (C:\New folder\New folder (36)\resume-reviewer\server\node_modules\mongoose\lib\document.js:2864:36)
     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
-    at async analyzeResume (file:///C:/New%20folder/New%20folder%20(36)/resume-reviewer/server/controllers/resumeController.js:55:26)
+    at async model.$__save (C:\New folder\New folder (36)\resume-reviewer\server\node_modules\mongoose\lib\model.js:390:7)
+    at async model.save (C:\New folder\New folder (36)\resume-reviewer\server\node_modules\mongoose\lib\model.js:664:5)
+    at async analyzeResume (file:///C:/New%20folder/New%20folder%20(36)/resume-reviewer/server/controllers/resumeController.js:86:31)

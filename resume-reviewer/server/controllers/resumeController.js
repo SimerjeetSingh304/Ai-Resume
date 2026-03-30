@@ -2,8 +2,7 @@ import { upload } from '../middleware/upload.js';
 import { parseResumeText } from '../utils/parseResume.js';
 import Resume from '../models/Resume.js';
 import Analysis from '../models/Analysis.js';
-import { extractResumeFactsWithGemini } from '../utils/geminiExtractor.js';
-import { computeScores } from '../utils/resumeScorer.js';
+import { requestResumeAnalysis } from '../utils/gemini.js';
 
 export const uploadResume = async (req, res) => {
     try {
@@ -52,35 +51,15 @@ export const analyzeResume = async (req, res) => {
             return res.status(404).json({ error: 'Resume not found' });
         }
 
-        // Step 1: Gemini extracts facts only
-        const geminiAnalysis = await extractResumeFactsWithGemini(resume.extractedText);
-        console.log("Gemini extracted facts:", geminiAnalysis);
+        // Call Gemini API
+        const aiResult = await requestResumeAnalysis(resume.extractedText, jobDescription);
 
-        // Step 2: Deterministic scoring from rules JSON
-        const result = computeScores(resume.extractedText, geminiAnalysis);
-        console.log("Computed scores:", result);
-
-        // Step 3: Save Analysis Result
+        // Save Analysis Result
         const analysisRecord = new Analysis({
             resumeId: resume._id,
             userId,
             jobDescription: jobDescription || '',
-            atsScore: result.atsScore,
-            contentScore: result.contentScore,
-            sectionsScore: result.sectionsScore,
-            essentialsScore: result.essentialsScore,
-            parseRate: result.parseRate,
-            issues: result.issues,
-            improvements: result.improvements,
-            resumeText: resume.extractedText,
-            // Keep scores for legacy compatibility if needed
-            scores: {
-                ats: result.atsScore,
-                content: result.contentScore,
-                alignment: 50, // Default for now
-                format: result.essentialsScore,
-                language: 90
-            }
+            ...aiResult // Spread overallScore, grade, scores, missingKeywords, suggestions, summary
         });
 
         const savedAnalysis = await analysisRecord.save();
