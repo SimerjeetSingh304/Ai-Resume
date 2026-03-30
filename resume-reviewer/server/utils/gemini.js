@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
 import dotenv from 'dotenv';
+import { getATSKnowledge } from './ragUtils.js';
 dotenv.config();
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY);
@@ -25,6 +26,69 @@ const analysisSchema = {
                 language: { type: SchemaType.INTEGER, description: "Grammar, tone, and action verbs score out of 100" }
             },
             required: ["ats", "content", "alignment", "format", "language"]
+        },
+        detailedBreakdown: {
+            type: SchemaType.OBJECT,
+            properties: {
+                atsEssentials: {
+                    type: SchemaType.OBJECT,
+                    properties: {
+                        score: { type: SchemaType.INTEGER },
+                        issues: {
+                            type: SchemaType.ARRAY,
+                            items: {
+                                type: SchemaType.OBJECT,
+                                properties: {
+                                    name: { type: SchemaType.STRING },
+                                    status: { type: SchemaType.STRING, description: "Exactly 'Pass' or 'Issue'" },
+                                    detail: { type: SchemaType.STRING }
+                                },
+                                required: ["name", "status"]
+                            }
+                        }
+                    },
+                    required: ["score", "issues"]
+                },
+                content: {
+                    type: SchemaType.OBJECT,
+                    properties: {
+                        score: { type: SchemaType.INTEGER },
+                        issues: {
+                            type: SchemaType.ARRAY,
+                            items: {
+                                type: SchemaType.OBJECT,
+                                properties: {
+                                    name: { type: SchemaType.STRING },
+                                    status: { type: SchemaType.STRING, description: "Exactly 'Pass' or 'Issue'" },
+                                    detail: { type: SchemaType.STRING }
+                                },
+                                required: ["name", "status"]
+                            }
+                        }
+                    },
+                    required: ["score", "issues"]
+                },
+                sections: {
+                    type: SchemaType.OBJECT,
+                    properties: {
+                        score: { type: SchemaType.INTEGER },
+                        issues: {
+                            type: SchemaType.ARRAY,
+                            items: {
+                                type: SchemaType.OBJECT,
+                                properties: {
+                                    name: { type: SchemaType.STRING },
+                                    status: { type: SchemaType.STRING, description: "Exactly 'Pass' or 'Issue'" },
+                                    detail: { type: SchemaType.STRING }
+                                },
+                                required: ["name", "status"]
+                            }
+                        }
+                    },
+                    required: ["score", "issues"]
+                }
+            },
+            required: ["atsEssentials", "content", "sections"]
         },
         missingKeywords: {
             type: SchemaType.ARRAY,
@@ -86,8 +150,24 @@ export const requestResumeAnalysis = async (resumeText, jobDescription = "") => 
     }
 
     prompt += `
+    STRICT SCORING GUIDELINES (RAG CONTEXT):
+    ---
+    ${await getATSKnowledge(resumeText)}
+    ---
+
     Your task is to thoroughly analyze the resume and provide a detailed review in JSON format matching the schema strictly.
-    Critique it rigorously like a hiring manager at a top tech company. Evaluate the impact of bullet points (did they use data/metrics?), the presence of action-oriented verbs, readability, and overall ATS parseability.
+    Critique it RUTHLESSLY like a hiring manager at a top tech company who sees 1000 resumes a day.
+    
+    IMPORTANT: DO NOT GIVE HIGH SCORES UNLESS THE RESUME IS NEAR PERFECT.
+    For an average resume, the score should range from 50 to 70. 
+    A score of 90+ is reserved for resumes with clear metrics, exceptional quantification, and ZERO formatting issues.
+    
+    Specific Deductions:
+    - Deduct 5 points for every bullet point that lacks a metric (%, $, numbers).
+    - Deduct 10 points if the layout is multi-column or contains complex tables.
+    - Deduct 5 points for using weak verbs like 'Responsible for' or 'Helped'.
+    
+    Evaluate the impact of bullet points (did they use data/metrics?), the presence of action-oriented verbs, readability, and overall ATS parseability.
 
     Resume Text:
     """

@@ -34,6 +34,32 @@ const analysisSchema = new mongoose.Schema({
         format: Number,
         language: Number
     },
+    detailedBreakdown: {
+        atsEssentials: {
+            score: Number,
+            issues: [{
+                name: String,
+                status: { type: String, enum: ['Pass', 'Issue'] },
+                detail: String
+            }]
+        },
+        content: {
+            score: Number,
+            issues: [{
+                name: String,
+                status: { type: String, enum: ['Pass', 'Issue'] },
+                detail: String
+            }]
+        },
+        sections: {
+            score: Number,
+            issues: [{
+                name: String,
+                status: { type: String, enum: ['Pass', 'Issue'] },
+                detail: String
+            }]
+        }
+    },
     missingKeywords: [String],
     suggestions: [suggestionSchema],
     summary: {
