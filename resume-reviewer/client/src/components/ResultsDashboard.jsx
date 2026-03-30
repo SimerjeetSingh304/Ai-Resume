@@ -8,24 +8,22 @@ export default function ResultsDashboard({ analysis }) {
     if (!analysis) return null;
 
     const {
-        overallScore = 0,
-        grade = "N/A",
-        scores = {
-            ats: 0,
-            content: 0,
-            alignment: 0,
-            format: 0,
-            language: 0
-        },
-        detailedBreakdown = {
-            atsEssentials: { score: 0, issues: [] },
-            content: { score: 0, issues: [] },
-            sections: { score: 0, issues: [] }
+        atsScore = 0,
+        contentScore = 0,
+        sectionsScore = 0,
+        essentialsScore = 0,
+        parseRate = 100,
+        issues = {
+            content: [],
+            sections: [],
+            essentials: []
         },
         missingKeywords = [],
         suggestions = [],
         summary = { strengths: [], improvements: [] }
     } = analysis || {};
+
+    const overallScore = atsScore;
 
     const getScoreColor = (score) => {
         if (score >= 80) return "text-emerald-500";
@@ -74,9 +72,9 @@ export default function ResultsDashboard({ analysis }) {
                         </div>
 
                         <p className="mt-6 text-sm font-medium text-slate-400">
-                            {detailedBreakdown.atsEssentials.issues.filter(i => i.status === 'Issue').length + 
-                             detailedBreakdown.content.issues.filter(i => i.status === 'Issue').length + 
-                             detailedBreakdown.sections.issues.filter(i => i.status === 'Issue').length} Issues Identified
+                            {issues.essentials.filter(i => i.status === 'Issue').length + 
+                             issues.content.filter(i => i.status === 'Issue').length + 
+                             issues.sections.filter(i => i.status === 'Issue').length} Issues Identified
                         </p>
                     </CardContent>
                 </Card>
@@ -85,20 +83,20 @@ export default function ResultsDashboard({ analysis }) {
                 <div className="lg:col-span-8 space-y-6">
                     <PremiumSection 
                         title="CONTENT" 
-                        score={detailedBreakdown.content.score} 
-                        issues={detailedBreakdown.content.issues}
+                        score={contentScore} 
+                        issues={issues.content}
                         icon={<FileText className="w-5 h-5 text-indigo-500" />}
                     />
                     <PremiumSection 
                         title="SECTIONS" 
-                        score={detailedBreakdown.sections.score} 
-                        issues={detailedBreakdown.sections.issues}
+                        score={sectionsScore} 
+                        issues={issues.sections}
                         icon={<CheckCircle2 className="w-5 h-5 text-emerald-500" />}
                     />
                     <PremiumSection 
                         title="ATS ESSENTIALS" 
-                        score={detailedBreakdown.atsEssentials.score} 
-                        issues={detailedBreakdown.atsEssentials.issues}
+                        score={essentialsScore} 
+                        issues={issues.essentials}
                         icon={<Target className="w-5 h-5 text-rose-500" />}
                     />
                 </div>
