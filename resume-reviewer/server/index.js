@@ -21,7 +21,7 @@ const corsOptions = {
         'https://ai-resume-brown.vercel.app', // Production frontend
         'https://ai-resume-qdc8.vercel.app', // Current frontend deployment
         'https://ai-resume-bttu.vercel.app', // New frontend deployment
-        process.env.CORS_ORIGIN // In case the user adds it to .env later
+        process.env.CORS_ORIGIN // In case t the user adds it to .env later
     ].filter(Boolean),
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
