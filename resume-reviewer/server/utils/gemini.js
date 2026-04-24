@@ -1,8 +1,7 @@
 import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
 import dotenv from 'dotenv';
+import fs from 'fs';
 dotenv.config();
-
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY);
 
 const analysisSchema = {
     type: SchemaType.OBJECT,
@@ -65,15 +64,20 @@ const analysisSchema = {
     required: ["overallScore", "grade", "scores", "missingKeywords", "suggestions", "summary"]
 };
 
-const model = genAI.getGenerativeModel({
-    model: "gemini-2.5-flash",
-    generationConfig: {
-        responseMimeType: "application/json",
-        responseSchema: analysisSchema,
-    }
-});
-
 export const requestResumeAnalysis = async (resumeText, jobDescription = "") => {
+    console.log('--- AI Analysis Request Started ---');
+    console.log('Model: gemini-2.5-flash');
+    console.log('Key (masked):', process.env.GOOGLE_AI_API_KEY?.substring(0, 7) + '...');
+
+    const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY);
+    const model = genAI.getGenerativeModel({
+        model: "gemini-2.5-flash",
+        generationConfig: {
+            responseMimeType: "application/json",
+            responseSchema: analysisSchema,
+        }
+    });
+
     let prompt = `
     You are an expert technical recruiter and ATS software evaluator.
     I will provide you with the extracted text from a candidate's resume.
@@ -104,14 +108,27 @@ export const requestResumeAnalysis = async (resumeText, jobDescription = "") => 
     `;
     }
 
+    console.log('Prompt Length:', prompt.length);
+
     let retries = 3;
     while (retries > 0) {
         try {
+            console.log(`Attempting Gemini API call (${4 - retries}/3)...`);
             const result = await model.generateContent(prompt);
             const responseText = result.response.text();
+            console.log('AI Response received successfully');
             return JSON.parse(responseText);
         } catch (error) {
             console.error(`Gemini API Error (${retries} retries left):`, error);
+            
+            // Log to file for persistent debug
+            fs.appendFileSync('gemini_debug.txt', JSON.stringify({
+                timestamp: new Date().toISOString(),
+                error: error.message,
+                status: error.status,
+                promptLength: prompt.length
+            }, null, 2) + '\n');
+
             retries--;
             if (retries === 0) {
                 throw new Error(error.message?.includes('503')

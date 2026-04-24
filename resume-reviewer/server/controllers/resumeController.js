@@ -41,18 +41,23 @@ export const uploadResume = async (req, res) => {
 };
 
 export const analyzeResume = async (req, res) => {
+    console.log(`>>> Incoming Analyze Request for Resume ID: ${req.params.id}`);
     try {
         const { id } = req.params;
         const { jobDescription } = req.body;
         const userId = req.headers['x-user-id'] || 'anonymous';
 
+        console.log(`Searching for resume in database...`);
         const resume = await Resume.findOne({ _id: id, userId });
         if (!resume) {
+            console.warn(`Resume not found: ${id}`);
             return res.status(404).json({ error: 'Resume not found' });
         }
 
+        console.log(`Resume found. Text length: ${resume.extractedText?.length}. Starting AI Analysis...`);
         // Call Gemini API
         const aiResult = await requestResumeAnalysis(resume.extractedText, jobDescription);
+        console.log(`AI Analysis completed successfully.`);
 
         // Save Analysis Result
         const analysisRecord = new Analysis({
@@ -74,9 +79,12 @@ export const analyzeResume = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Analysis Error:', error);
+        console.error('>>> CRITICAL ERROR in analyzeResume controller:', error);
         import('fs').then(fs => fs.writeFileSync('error_log_analysis.txt', error.stack || error.message || error.toString()));
-        res.status(500).json({ error: 'AI analysis failed. Please try again later.' });
+        res.status(500).json({
+            error: 'AI analysis failed. Please try again later.',
+            details: error.message
+        });
     }
 };
 
