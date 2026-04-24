@@ -1,9 +1,10 @@
-import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
+import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton, useUser } from "@clerk/clerk-react";
 import { Link } from "react-router-dom";
 import { Menu, X, Star, Wrench, DollarSign, BarChart3, User } from "lucide-react";
 import { useState } from "react";
 
 export default function Navbar() {
+    const { isLoaded } = useUser();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const navItems = [
@@ -40,24 +41,30 @@ export default function Navbar() {
 
                 {/* Desktop User Actions */}
                 <div className="hidden md:flex items-center gap-3">
-                    <SignedOut>
-                        <SignInButton mode="modal">
-                            <button className="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors">
-                                Log in
-                            </button>
-                        </SignInButton>
-                        <SignUpButton mode="modal">
-                            <button className="rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 transition-all hover:scale-105 active:scale-95">
-                                Start for free
-                            </button>
-                        </SignUpButton>
-                    </SignedOut>
-                    <SignedIn>
-                        <Link to="/dashboard" className="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">
-                            Dashboard
-                        </Link>
-                        <UserButton afterSignOutUrl="/" appearance={{ elements: { avatarBox: "w-9 h-9 border-2 border-slate-200 shadow-sm hover:shadow-md transition-shadow" } }} />
-                    </SignedIn>
+                    {!isLoaded ? (
+                        <div className="w-24 h-9 bg-slate-100 animate-pulse rounded-full" />
+                    ) : (
+                        <>
+                            <SignedOut>
+                                <SignInButton mode="modal">
+                                    <button className="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors">
+                                        Log in
+                                    </button>
+                                </SignInButton>
+                                <SignUpButton mode="modal">
+                                    <button className="rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 transition-all hover:scale-105 active:scale-95">
+                                        Start for free
+                                    </button>
+                                </SignUpButton>
+                            </SignedOut>
+                            <SignedIn>
+                                <Link to="/dashboard" className="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">
+                                    Dashboard
+                                </Link>
+                                <UserButton afterSignOutUrl="/" appearance={{ elements: { avatarBox: "w-9 h-9 border-2 border-slate-200 shadow-sm hover:shadow-md transition-shadow" } }} />
+                            </SignedIn>
+                        </>
+                    )}
                 </div>
 
                 {/* Mobile Menu Button */}

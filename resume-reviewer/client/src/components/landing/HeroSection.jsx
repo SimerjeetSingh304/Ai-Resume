@@ -1,8 +1,10 @@
-import { SignUpButton, SignedIn, SignedOut } from "@clerk/clerk-react";
+import { SignUpButton, SignedIn, SignedOut, useUser } from "@clerk/clerk-react";
 import { Link } from "react-router-dom";
-import { FileSearch, Sparkles, ArrowRight } from "lucide-react";
+import { FileSearch, Sparkles, Loader2 } from "lucide-react";
 
 export default function HeroSection() {
+    const { isLoaded } = useUser();
+
     return (
         <section className="relative overflow-hidden pt-24 pb-32">
             {/* Background gradients */}
@@ -27,32 +29,41 @@ export default function HeroSection() {
                     Upload your resume for an instant ATS compatibility score, or let our AI generate a perfectly tailored, recruiter-ready resume from scratch in seconds.
                 </p>
 
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <SignedOut>
-                        <SignUpButton mode="modal">
-                            <button className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 text-base font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-lg shadow-blue-200 transition-all hover:-translate-y-0.5">
-                                <FileSearch className="w-5 h-5" />
-                                Analyze My Resume
-                            </button>
-                        </SignUpButton>
-                        <SignUpButton mode="modal">
-                            <button className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 text-base font-bold text-slate-700 bg-white border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 rounded-xl transition-all">
-                                <Sparkles className="w-5 h-5 text-indigo-600" />
-                                Build from Scratch
-                            </button>
-                        </SignUpButton>
-                    </SignedOut>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 min-h-[64px]">
+                    {!isLoaded ? (
+                        <div className="flex items-center gap-2 text-slate-400 animate-pulse font-medium">
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            <span>Initializing...</span>
+                        </div>
+                    ) : (
+                        <>
+                            <SignedOut>
+                                <SignUpButton mode="modal">
+                                    <button className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 text-base font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-lg shadow-blue-200 transition-all hover:-translate-y-0.5">
+                                        <FileSearch className="w-5 h-5" />
+                                        Analyze My Resume
+                                    </button>
+                                </SignUpButton>
+                                <SignUpButton mode="modal">
+                                    <button className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 text-base font-bold text-slate-700 bg-white border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 rounded-xl transition-all">
+                                        <Sparkles className="w-5 h-5 text-indigo-600" />
+                                        Build from Scratch
+                                    </button>
+                                </SignUpButton>
+                            </SignedOut>
 
-                    <SignedIn>
-                        <Link to="/review" className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 text-base font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-lg shadow-blue-200 transition-all hover:-translate-y-0.5">
-                            <FileSearch className="w-5 h-5" />
-                            Review Resume
-                        </Link>
-                        <Link to="/generate" className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 text-base font-bold text-slate-700 bg-white border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 rounded-xl transition-all">
-                            <Sparkles className="w-5 h-5 text-indigo-600" />
-                            Generate Resume
-                        </Link>
-                    </SignedIn>
+                            <SignedIn>
+                                <Link to="/review" className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 text-base font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-lg shadow-blue-200 transition-all hover:-translate-y-0.5">
+                                    <FileSearch className="w-5 h-5" />
+                                    Review Resume
+                                </Link>
+                                <Link to="/generate" className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 text-base font-bold text-slate-700 bg-white border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 rounded-xl transition-all">
+                                    <Sparkles className="w-5 h-5 text-indigo-600" />
+                                    Generate Resume
+                                </Link>
+                            </SignedIn>
+                        </>
+                    )}
                 </div>
 
                 <p className="mt-6 text-sm text-slate-400 font-medium">
