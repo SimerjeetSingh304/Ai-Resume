@@ -19,6 +19,7 @@ const corsOptions = {
     origin: [
         'http://localhost:5173', // Local frontend
         'https://ai-resume-brown.vercel.app', // Production frontend
+        'https://ai-resume-qdc8.vercel.app', // Current frontend deployment
         process.env.CORS_ORIGIN // In case the user adds it to .env later
     ].filter(Boolean),
     credentials: true,
