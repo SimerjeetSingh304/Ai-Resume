@@ -30,10 +30,6 @@ app.use(helmet());
 app.use(express.json());
 
 // Routes Setup
-app.get("/", (req, res) => {
-  res.send("API is running");
-});
-
 app.get('/api/health', (req, res) => {
     res.status(200).json({ status: 'ok', message: 'Server is running' });
 });
@@ -46,5 +42,12 @@ app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ error: 'Internal Server Error' });
 });
+
+// Start Server
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+}
 
 export default app;
