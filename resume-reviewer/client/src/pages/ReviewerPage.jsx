@@ -33,8 +33,13 @@ export default function ReviewerPage() {
             const formData = new FormData();
             formData.append("resume", file);
 
-            const apiUrl = import.meta.env.VITE_BACKEND_URL;
-            const uploadRes = await fetch(`${apiUrl}/api/resume/upload`, {
+            const rawApiUrl = import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_BASE_URL;
+            if (!rawApiUrl) {
+                throw new Error("Missing API URL. Set VITE_BACKEND_URL or VITE_API_BASE_URL in client/.env.");
+            }
+            const apiBase = rawApiUrl.replace(/\/+$/, "");
+            const apiRoot = apiBase.endsWith("/api") ? apiBase : `${apiBase}/api`;
+            const uploadRes = await fetch(`${apiRoot}/resume/upload`, {
                 method: "POST",
                 headers, // Do NOT set Content-Type for FormData, browser does it automatically with boundary
                 body: formData,
@@ -44,7 +49,7 @@ export default function ReviewerPage() {
             const { resumeId } = await uploadRes.json();
 
             // 2. Analyze File against Job Description
-            const analyzeRes = await fetch(`${apiUrl}/api/resume/analyze/${resumeId}`, {
+            const analyzeRes = await fetch(`${apiRoot}/resume/analyze/${resumeId}`, {
                 method: "POST",
                 headers: {
                     ...headers,

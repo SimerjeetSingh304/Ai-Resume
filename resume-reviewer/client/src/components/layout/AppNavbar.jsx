@@ -1,33 +1,29 @@
-import { SignedIn, SignedOut, UserButton, SignOutButton } from "@clerk/clerk-react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { Menu, X, BarChart3, FileText, Sparkles, History, Home, LogOut, User } from "lucide-react";
 import { useState } from "react";
+import { NavLink } from "react-router-dom";
+import { Menu, X, User, LogOut, LayoutDashboard, FileSearch, Sparkles, History } from "lucide-react";
 
 const navItems = [
-    { label: "Dashboard", to: "/dashboard", icon: BarChart3 },
-    { label: "Review Resume", to: "/review", icon: FileText },
-    { label: "Generate Resume", to: "/generate", icon: Sparkles },
+    { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard },
+    { label: "Review", to: "/review", icon: FileSearch },
+    { label: "Generate", to: "/generate", icon: Sparkles },
     { label: "History", to: "/history", icon: History },
 ];
 
 export default function AppNavbar() {
-    const navigate = useNavigate();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-lg shadow-sm">
-            <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-                <button
-                    onClick={() => navigate("/")}
-                    className="flex items-center gap-2 focus:outline-none group"
-                >
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 shadow-lg group-hover:shadow-xl transition-all duration-200 group-hover:scale-105">
-                        <span className="text-xl font-bold leading-none text-white">R</span>
+        <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/80 backdrop-blur-md">
+            <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
+                {/* Logo */}
+                <NavLink to="/" className="flex items-center gap-2">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 shadow-lg shadow-blue-200">
+                        <span className="text-lg font-bold text-white">R</span>
                     </div>
-                    <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-xl font-bold text-transparent">
-                        Resume AI
+                    <span className="text-xl font-bold tracking-tight text-slate-900 hidden sm:block">
+                        Resume<span className="text-blue-600">AI</span>
                     </span>
-                </button>
+                </NavLink>
 
                 {/* Desktop Navigation */}
                 <nav className="hidden md:flex items-center gap-1">
@@ -36,14 +32,13 @@ export default function AppNavbar() {
                             key={item.to}
                             to={item.to}
                             className={({ isActive }) =>
-                                `flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                                    isActive 
-                                        ? "bg-blue-50 text-blue-700 shadow-sm" 
+                                `px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                    isActive
+                                        ? "text-blue-600 bg-blue-50"
                                         : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                                 }`
                             }
                         >
-                            <item.icon className="w-4 h-4" />
                             {item.label}
                         </NavLink>
                     ))}
@@ -51,28 +46,12 @@ export default function AppNavbar() {
 
                 {/* Desktop User Actions */}
                 <div className="hidden md:flex items-center gap-3">
-                    <SignedOut>
-                        <button
-                            onClick={() => navigate("/")}
-                            className="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors"
-                        >
-                            Back to Landing
-                        </button>
-                    </SignedOut>
-                    <SignedIn>
-                        <SignOutButton>
-                            <button className="flex items-center rounded-full border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 transition-colors">
-                                Sign out
-                            </button>
-                        </SignOutButton>
-                        <UserButton
-                            appearance={{
-                                elements: {
-                                    avatarBox: "w-9 h-9 border-2 border-slate-200 shadow-sm hover:shadow-md transition-shadow",
-                                },
-                            }}
-                        />
-                    </SignedIn>
+                    <button className="flex items-center rounded-full border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 transition-colors">
+                        Sign out (Disabled)
+                    </button>
+                    <div className="w-9 h-9 border-2 border-slate-200 shadow-sm rounded-full bg-slate-100 flex items-center justify-center">
+                        <User className="w-5 h-5 text-slate-400" />
+                    </div>
                 </div>
 
                 {/* Mobile Menu Button */}
@@ -111,39 +90,13 @@ export default function AppNavbar() {
                         ))}
                         
                         <div className="pt-3 mt-3 border-t border-slate-200">
-                            <SignedOut>
-                                <button
-                                    onClick={() => {
-                                        navigate("/");
-                                        setMobileMenuOpen(false);
-                                    }}
-                                    className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors"
-                                >
-                                    <Home className="w-4 h-4" />
-                                    Back to Landing
-                                </button>
-                            </SignedOut>
-                            <SignedIn>
-                                <SignOutButton>
-                                    <button 
-                                        onClick={() => setMobileMenuOpen(false)}
-                                        className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors"
-                                    >
-                                        <LogOut className="w-4 h-4" />
-                                        Sign out
-                                    </button>
-                                </SignOutButton>
-                                <div className="flex items-center gap-3 px-3 py-2.5">
-                                    <User className="w-4 h-4" />
-                                    <UserButton
-                                        appearance={{
-                                            elements: {
-                                                avatarBox: "w-8 h-8 border-2 border-slate-200",
-                                            },
-                                        }}
-                                    />
-                                </div>
-                            </SignedIn>
+                            <button 
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors"
+                            >
+                                <LogOut className="w-4 h-4" />
+                                Sign out (Disabled)
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -151,4 +104,3 @@ export default function AppNavbar() {
         </header>
     );
 }
-
